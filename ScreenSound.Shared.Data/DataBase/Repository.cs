@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ScreenSound.DataBase
 {
-    internal class Repository<T> where T : class
+    public class Repository<T> where T : class
     {
         protected readonly ScreenSoundContext _context;
         

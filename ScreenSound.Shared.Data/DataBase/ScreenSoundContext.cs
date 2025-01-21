@@ -4,7 +4,7 @@ using ScreenSound.Modelos;
 
 namespace ScreenSound.DataBase
 {
-    internal class ScreenSoundContext: DbContext
+    public class ScreenSoundContext: DbContext
     {
         private readonly string _connectionString = "Server=localhost;Database=ScreenSoundDB;User Id=admin;Password=123;Trusted_Connection=True;TrustServerCertificate=True;";
 
