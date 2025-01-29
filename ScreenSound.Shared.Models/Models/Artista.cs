@@ -4,7 +4,7 @@ namespace ScreenSound.Modelos;
 
 public class Artista 
 {
-
+    public Artista() { }
     public Artista(string nome, string bio)
     {
         Nome = nome;
