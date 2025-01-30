@@ -1,8 +1,8 @@
 ﻿using System.Net.Mail;
 
-namespace ScreenSound.Modelos; 
+namespace ScreenSound.Shared.Models.Models;
 
-public class Artista 
+public class Artista
 {
     public Artista() { }
     public Artista(string nome, string bio)

@@ -1,19 +1,12 @@
-﻿using ScreenSound.Modelos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScreenSound.DataBase
+﻿namespace ScreenSound.Shared.Data.DataBase
 {
     public class Repository<T> where T : class
     {
         protected readonly ScreenSoundContext _context;
-        
+
         public Repository(ScreenSoundContext context)
         {
-            this._context = context;
+            _context = context;
         }
 
         public IEnumerable<T> GetAll()
@@ -46,8 +39,9 @@ namespace ScreenSound.DataBase
         public void Delete(Func<T, bool> condition)
         {
             var generic = _context.Set<T>().FirstOrDefault(condition);
-            
-            if (generic is not null) {
+
+            if (generic is not null)
+            {
                 _context.Set<T>().Remove(generic);
                 _context.SaveChanges();
             }

@@ -1,4 +1,4 @@
-﻿namespace ScreenSound.Modelos;
+﻿namespace ScreenSound.Shared.Models.Models;
 
 public class Musica
 {
@@ -6,7 +6,7 @@ public class Musica
     public Musica() { }
     public Musica(string nome)
     {
-        this.Nome = nome;
+        Nome = nome;
     }
 
     public string Nome { get; set; }
@@ -17,7 +17,7 @@ public class Musica
     public void ExibirFichaTecnica()
     {
         Console.WriteLine($"Nome: {Nome}");
-      
+
     }
 
     public override string ToString()
