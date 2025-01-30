@@ -1,6 +1,6 @@
-﻿using ScreenSound.DataBase;
-using ScreenSound.Menus;
-using ScreenSound.Modelos;
+﻿using ScreenSound.Menus;
+using ScreenSound.Shared.Data.DataBase;
+using ScreenSound.Shared.Models.Models;
 
 
 Dictionary<int, Menu> opcoes = new();
