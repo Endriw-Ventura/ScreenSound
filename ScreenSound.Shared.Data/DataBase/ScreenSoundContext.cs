@@ -15,5 +15,11 @@ namespace ScreenSound.Shared.Data.DataBase
         {
             optionsBuilder.UseSqlServer(_connectionString).UseLazyLoadingProxies(); ;
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Artista>().HasMany(a => a.Musicas).WithOne(m => m.Artista);
+            modelBuilder.Entity<Musica>().HasMany(m => m.Generos).WithMany(g => g.Musicas);
+        }
     }
 }
