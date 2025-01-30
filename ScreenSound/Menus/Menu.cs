@@ -1,5 +1,5 @@
-﻿using ScreenSound.DataBase;
-using ScreenSound.Modelos;
+﻿using ScreenSound.Shared.Data.DataBase;
+using ScreenSound.Shared.Models.Models;
 
 namespace ScreenSound.Menus;
 
