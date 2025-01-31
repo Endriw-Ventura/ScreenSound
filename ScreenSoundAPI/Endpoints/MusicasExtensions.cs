@@ -61,6 +61,32 @@ namespace ScreenSoundAPI.Endpoints
                 db.Delete(musica);
                 return Results.NoContent();
             });
+
+            app.MapPatch("/Musicas/{nome}/Generos", (
+                Repository<Musica> musicaDB,
+                Repository<Genero> generoDB, 
+                string nome, 
+                [FromBody] List<int> generosIDs) => {
+
+                    var musica = musicaDB.Get(m => m.Nome.ToLower().Equals(nome.ToLower()));
+                    if (musica is null)
+                        return Results.NotFound("Musica não encontrada");
+
+                    var generos = new List<Genero>();
+
+                    foreach (int id in generosIDs)
+                    {
+                        var genero = generoDB.Get(g => g.Id == id);
+                        if (genero is null)
+                            return Results.NotFound("Genero não encontrado");
+
+                        generos.Add(genero);
+                    }
+
+                    musica.Generos = generos;
+                    musicaDB.Update(musica);
+                    return Results.Ok();
+            });
         }
     }
 }
