@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using ScreenSound.Shared.Data.DataBase;
 using ScreenSound.Shared.Models.Models;
+using ScreenSoundAPI.Converters;
 using ScreenSoundAPI.DTOs;
 using ScreenSoundAPI.Requests;
 using ScreenSoundAPI.Responses;
@@ -16,7 +17,7 @@ namespace ScreenSoundAPI.Endpoints
             app.MapGet("/Musicas", (Repository<Musica> db) =>
             {
                 var musicas = db.GetAll();
-                return Results.Ok(EntityListToReponseList(musicas));
+                return Results.Ok(MusicasConverter.ConvertMusicaListToMusicaResponseList(musicas));
             });
 
             app.MapGet("/Musicas/{nome}", (Repository<Musica> db, string nome) =>
@@ -25,7 +26,7 @@ namespace ScreenSoundAPI.Endpoints
                 if (musica is null)
                     return Results.NotFound();
 
-                return Results.Ok(EntityToResponse(musica));
+                return Results.Ok(MusicasConverter.ConvertMusicaToMusicaResponse(musica));
             });
 
             app.MapPost("/Musicas", (Repository<Musica> db, [FromBody] MusicasRequest musica) =>
@@ -41,8 +42,7 @@ namespace ScreenSoundAPI.Endpoints
                 if (musicaAntiga is null)
                     return Results.NotFound();
 
-                if (!musica.Nome.IsNullOrEmpty())
-                    musicaAntiga.Nome = musica.Nome;
+                musicaAntiga.Nome = musica.Nome;
 
                 if (!musica.AnoLancamento.IsNullOrEmpty())
                     musicaAntiga.AnoLancamento = Convert.ToInt32(musica.AnoLancamento);
@@ -61,19 +61,6 @@ namespace ScreenSoundAPI.Endpoints
                 db.Delete(musica);
                 return Results.NoContent();
             });
-        }
-        private static ICollection<MusicasResponse> EntityListToReponseList(IEnumerable<Musica> artistas)
-        {
-            return artistas.Select(a => EntityToResponse(a)).ToList();
-        }
-
-        private static MusicasResponse EntityToResponse(Musica musica)
-        {
-            return new MusicasResponse(musica.Id,
-                musica.Artista?.Id, 
-                musica.Nome, 
-                musica.Artista?.Nome ?? "Artista Desconhecido",
-                musica.AnoLancamento);
         }
     }
 }

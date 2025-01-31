@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using ScreenSound.Shared.Data.DataBase;
 using ScreenSound.Shared.Models.Models;
+using ScreenSoundAPI.Converters;
 using ScreenSoundAPI.Requests;
 using ScreenSoundAPI.Responses;
 
@@ -14,7 +15,7 @@ namespace ScreenSoundAPI.Endpoints
             app.MapGet("/Artistas", (Repository<Artista> db) =>
             {
                 var artistas = db.GetAll();
-                return Results.Ok(EntityListToReponseList(artistas));
+                return Results.Ok(ArtistasConverter.ConvertArtistaListToArtistaResponseList(artistas));
             });
 
             app.MapGet("/Artistas/{nome}", (Repository<Artista> db, string nome) => {
@@ -22,7 +23,7 @@ namespace ScreenSoundAPI.Endpoints
                 if (artista is null)
                     return Results.NotFound();
 
-                return Results.Ok(new ArtistasResponse(artista.Id, artista.Nome, artista.FotoPerfil, artista.Bio));
+                return Results.Ok(ArtistasConverter.ConvertArtistaToArtistaResponse(artista));
             });
 
             app.MapPost("/Artistas", (Repository<Artista> db, [FromBody] ArtistasRequest artistaRequest) =>
@@ -37,8 +38,7 @@ namespace ScreenSoundAPI.Endpoints
                 if (artistaAntigo is null)
                     return Results.NotFound();
 
-                if (!artista.Nome.IsNullOrEmpty())
-                    artistaAntigo.Nome = artista.Nome;
+                artistaAntigo.Nome = artista.Nome;
 
                 if(!artista.FotoPerfil.IsNullOrEmpty())
                     artistaAntigo.FotoPerfil = artista.FotoPerfil;
@@ -59,21 +59,6 @@ namespace ScreenSoundAPI.Endpoints
                 db.Delete(artista);
                 return Results.NoContent();
             });
-
-        }
-
-        private static ICollection<ArtistasResponse> EntityListToReponseList(IEnumerable<Artista> artistas)
-        {
-            return artistas.Select(a => EntityToResponse(a)).ToList();
-        }
-
-        private static ArtistasResponse EntityToResponse(Artista artista)
-        {
-            return new ArtistasResponse(
-                artista.Id,
-                artista.Nome, 
-                artista.FotoPerfil, 
-                artista.Bio);
         }
     }
 }

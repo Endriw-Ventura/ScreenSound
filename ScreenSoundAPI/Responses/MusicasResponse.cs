@@ -1,4 +1,4 @@
 ﻿namespace ScreenSoundAPI.Responses
 {
-    public record MusicasResponse(int Id, int? ArtistaId, string Nome, string NomeArtista, int? AnoLancamento);
+    public record MusicasResponse(int Id, int? ArtistaId, string Nome, string NomeArtista, int? AnoLancamento, ICollection<GenerosResponse> generos);
 }

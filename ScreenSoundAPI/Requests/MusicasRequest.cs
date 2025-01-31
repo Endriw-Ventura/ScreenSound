@@ -1,4 +1,6 @@
-﻿namespace ScreenSoundAPI.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ScreenSoundAPI.DTOs
 {
-    public record MusicasRequest(string Nome);
+    public record MusicasRequest([Required] string Nome);
 }
