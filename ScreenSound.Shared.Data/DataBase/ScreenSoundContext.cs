@@ -20,6 +20,7 @@ namespace ScreenSound.Shared.Data.DataBase
         {
             modelBuilder.Entity<Artista>().HasMany(a => a.Musicas).WithOne(m => m.Artista);
             modelBuilder.Entity<Musica>().HasMany(m => m.Generos).WithMany(g => g.Musicas);
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
