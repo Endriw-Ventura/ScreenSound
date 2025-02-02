@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ScreenSound.Shared.Models.Models;
 
 namespace ScreenSound.Shared.Data.DataBase
 {
-    public class ScreenSoundContext : DbContext
+    public class ScreenSoundContext : IdentityDbContext<PessoaComAcesso, PerfisDeAcesso, int>
     {
         private readonly string _connectionString = "Server=localhost;Database=ScreenSoundDB;User Id=admin;Password=123;Trusted_Connection=True;TrustServerCertificate=True;";
 
