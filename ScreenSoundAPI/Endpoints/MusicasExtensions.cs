@@ -14,13 +14,17 @@ namespace ScreenSoundAPI.Endpoints
         public static void AddEndpointsMusicas(this WebApplication app)
         {
 
-            app.MapGet("/Musicas", (Repository<Musica> db) =>
+            var groupBuilder = app.MapGroup("musicas")
+                .RequireAuthorization()
+                .WithTags("Musicas");
+
+            groupBuilder.MapGet("", (Repository<Musica> db) =>
             {
                 var musicas = db.GetAll();
                 return Results.Ok(MusicasConverter.ConvertMusicaListToMusicaResponseList(musicas));
             });
 
-            app.MapGet("/Musicas/{nome}", (Repository<Musica> db, string nome) =>
+            groupBuilder.MapGet("{nome}", (Repository<Musica> db, string nome) =>
             {
                 var musica = db.Get(a => a.Nome.ToLower().Equals(nome.ToLower()));
                 if (musica is null)
@@ -29,14 +33,14 @@ namespace ScreenSoundAPI.Endpoints
                 return Results.Ok(MusicasConverter.ConvertMusicaToMusicaResponse(musica));
             });
 
-            app.MapPost("/Musicas", (Repository<Musica> db, [FromBody] MusicasRequest musica) =>
+            groupBuilder.MapPost("", (Repository<Musica> db, [FromBody] MusicasRequest musica) =>
             {
                 var musicaNova = new Musica(musica.Nome);
                 db.Add(musicaNova);
                 return Results.Ok(musicaNova.Id);
             });
 
-            app.MapPut("/Musicas", (Repository<Musica> db, [FromBody] MusicasRequestEdit musica) =>
+            groupBuilder.MapPut("", (Repository<Musica> db, [FromBody] MusicasRequestEdit musica) =>
             {
                 var musicaAntiga = db.Get(a => a.Id == musica.Id);
                 if (musicaAntiga is null)
@@ -51,7 +55,7 @@ namespace ScreenSoundAPI.Endpoints
                 return Results.Ok(musicaAntiga);
             });
 
-            app.MapDelete("/Musicas/{id}", (Repository<Musica> db, int id) =>
+            groupBuilder.MapDelete("{id}", (Repository<Musica> db, int id) =>
             {
                 var musica = db.Get(a => a.Id == id);
 
@@ -62,7 +66,7 @@ namespace ScreenSoundAPI.Endpoints
                 return Results.NoContent();
             });
 
-            app.MapPatch("/Musicas/{nome}/Generos", (
+            groupBuilder.MapPatch("{nome}/Generos", (
                 Repository<Musica> musicaDB,
                 Repository<Genero> generoDB, 
                 string nome, 

@@ -12,13 +12,17 @@ namespace ScreenSoundAPI.Endpoints
     {
         public static void AddEndpointsArtistas(this WebApplication app)
         {
-            app.MapGet("/Artistas", (Repository<Artista> db) =>
+            var groupBuilder = app.MapGroup("artistas")
+                .RequireAuthorization()
+                .WithTags("Artistas");
+
+            groupBuilder.MapGet("", (Repository<Artista> db) =>
             {
                 var artistas = db.GetAll();
                 return Results.Ok(ArtistasConverter.ConvertArtistaListToArtistaResponseList(artistas));
             });
 
-            app.MapGet("/Artistas/{nome}", (Repository<Artista> db, string nome) => {
+            groupBuilder.MapGet("{nome}", (Repository<Artista> db, string nome) => {
                 var artista = db.Get(a => a.Nome.ToLower().Equals(nome.ToLower()));
                 if (artista is null)
                     return Results.NotFound();
@@ -26,14 +30,14 @@ namespace ScreenSoundAPI.Endpoints
                 return Results.Ok(ArtistasConverter.ConvertArtistaToArtistaResponse(artista));
             });
 
-            app.MapPost("/Artistas", (Repository<Artista> db, [FromBody] ArtistasRequest artistaRequest) =>
+            groupBuilder.MapPost("", (Repository<Artista> db, [FromBody] ArtistasRequest artistaRequest) =>
             {
                 var artista = new Artista(artistaRequest.Nome, artistaRequest.Bio);
                 db.Add(artista);
                 return Results.Ok(artista.Id);
             });
 
-            app.MapPut("/Artistas", (Repository<Artista> db, [FromBody] ArtistaRequestEdit artista) => {
+            groupBuilder.MapPut("", (Repository<Artista> db, [FromBody] ArtistaRequestEdit artista) => {
                 var artistaAntigo = db.Get(a => a.Id == artista.Id);
                 if (artistaAntigo is null)
                     return Results.NotFound();
@@ -50,7 +54,7 @@ namespace ScreenSoundAPI.Endpoints
                 return Results.Ok();
             });
 
-            app.MapDelete("/Artistas/{id}", (Repository<Artista> db, int id) =>
+            groupBuilder.MapDelete("{id}", (Repository<Artista> db, int id) =>
             {
                 var artista = db.Get(a => a.Id == id);
                 if (artista is null)

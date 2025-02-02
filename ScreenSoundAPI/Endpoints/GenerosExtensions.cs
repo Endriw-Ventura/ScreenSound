@@ -12,13 +12,18 @@ namespace ScreenSoundAPI.Endpoints
     {
         public static void AddEndpointsGeneros(this WebApplication app)
         {
-            app.MapGet("/Generos", (Repository<Genero> db) =>
+
+            var groupBuilder = app.MapGroup("generos")
+                .RequireAuthorization()
+                .WithTags("Generos");
+
+            groupBuilder.MapGet("", (Repository<Genero> db) =>
             {
                 var generos = db.GetAll();
                 return Results.Ok(GenerosConverter.ConvertGeneroListToGeneroResponseList(generos));
             });
 
-            app.MapGet("/Generos/{nome}", (Repository<Genero> db, string nome) =>
+            groupBuilder.MapGet("{nome}", (Repository<Genero> db, string nome) =>
             {
                 var genero = db.Get(g => g.Nome.ToLower().Equals(nome.ToLower()));
                 if (genero is null)
@@ -27,13 +32,13 @@ namespace ScreenSoundAPI.Endpoints
                 return Results.Ok(GenerosConverter.ConvertGeneroToGeneroResponse(genero));
             });
 
-            app.MapPost("/Generos", (Repository<Genero> db, [FromBody] GeneroRequest genero) => {
+            groupBuilder.MapPost("", (Repository<Genero> db, [FromBody] GeneroRequest genero) => {
                 var generoNovo = new Genero(genero.Nome, genero.Descricao);
                 db.Add(generoNovo);
                 return Results.Ok(generoNovo.Id);
             });
 
-            app.MapPut("/Generos", (Repository<Genero> db, [FromBody] GeneroRequestEdit genero) => {
+            groupBuilder.MapPut("", (Repository<Genero> db, [FromBody] GeneroRequestEdit genero) => {
                 var generoAntigo = db.Get(g => g.Id == genero.Id);
                 if (generoAntigo is null)
                     return Results.NotFound();
@@ -46,7 +51,7 @@ namespace ScreenSoundAPI.Endpoints
                 return Results.Ok();
             });
 
-            app.MapDelete("/Generos/{id}", (Repository<Genero> db, int id) =>
+            groupBuilder.MapDelete("{id}", (Repository<Genero> db, int id) =>
             {
                 var genero = db.Get(g => g.Id == id);
                 if (genero is null)
