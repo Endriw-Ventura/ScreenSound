@@ -5,12 +5,18 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ScreenSoundContext>();
+
+builder.Services
+    .AddIdentityApiEndpoints<PessoaComAcesso>()
+    .AddEntityFrameworkStores<ScreenSoundContext>();
+
 builder.Services.AddScoped<Repository<Artista>>();
 builder.Services.AddScoped<Repository<Musica>>();
 builder.Services.AddScoped<Repository<Genero>>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
 builder.Services.AddCors(
     options => options.AddPolicy(
         "wasm",
@@ -20,11 +26,19 @@ builder.Services.AddCors(
             .SetIsOriginAllowed(pol => true)
             .AllowAnyHeader()
             .AllowCredentials()));
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 app.AddEndpointsArtistas();
 app.AddEndpointsMusicas();
 app.AddEndpointsGeneros();
+
+app.MapGroup("auth").MapIdentityApi<PessoaComAcesso>().WithTags("Autorização");
+
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors("wasm");
+app.UseAuthorization();
+
 app.Run();
